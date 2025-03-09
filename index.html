@@ -70,6 +70,27 @@
         <button id="startButton" class="button2" data-aos="fade-up" data-aos-duration="1500">أبدا</button>
     </a>
 
+    <button style="padding: 20px; background-color: violet;" id="notifi">Click</button>
+
+<script>
+    const notification2 = document.getElementById("notifi");
+
+    notification2.addEventListener("click", () => {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {  // ✅ التأكد من السماح بالإشعارات
+                new Notification("🔔 إشعار جديد!", {
+                    body: "تم إرسال الإشعار بنجاح 🎉",
+                    icon: "https://via.placeholder.com/128", // 🔹 يمكنك استبدالها برابط أيقونة
+                    vibrate: [200, 100, 200] // 🔹 اهتزاز على الهواتف
+                });
+            } else {
+                alert("⚠️ لم يتم منح الإذن للإشعارات!");
+            }
+        });
+    });
+</script>
+
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
@@ -93,45 +114,7 @@
             }, 1500); // تأخير الانتقال
         });
     </script>
-     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-
-<script>
-    window.OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
-        OneSignal.init({
-            appId: "733889ae-73cd-40a9-abf7-2f78fc471f78",  // 🔹 استبدلها بمعرف التطبيق من OneSignal
-            safari_web_id: "YOUR_SAFARI_ID", // (اختياري) لمتصفح Safari
-            notifyButton: {
-                enable: true, // زر السماح بالإشعارات
-            },
-            allowLocalhostAsSecureOrigin: true, // للسماح بتشغيل الإشعارات محليًا
-        });
-
-        // طلب الإذن من المستخدم عند تحميل الصفحة
-        OneSignal.push(function() {
-            OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
-                if (!isEnabled) {
-                    OneSignal.showSlidedownPrompt(); // عرض نافذة الإذن
-                }
-            });
-        });
-
-        // الحصول على التوكن الخاص بالمستخدم عند الموافقة
-        OneSignal.push(function() {
-            OneSignal.getUserId().then(function(userId) {
-                console.log("🔔 توكن المستخدم:", userId);
-            });
-        });
-
-        // استقبال الإشعارات عند وصولها
-        OneSignal.push(function() {
-            OneSignal.on('notificationDisplay', function(event) {
-                console.log("إشعار جديد:", event);
-                alert(`🔔 ${event.heading}: ${event.content}`);
-            });
-        });
-    });
-</script>
+     
 
 
 </body>
