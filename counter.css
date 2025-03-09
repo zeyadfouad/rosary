@@ -1,0 +1,92 @@
+@font-face {
+    font-family: "kofe";
+    src: url(font/ReemKufi-VariableFont_wght.ttf);
+}
+
+
+@font-face {
+    font-family: "cairo";
+    src: url(font/Cairo-Regular.ttf);
+}
+
+
+*{
+    padding: 0;
+    margin: 0;
+}
+
+
+body{
+    background-color: #333;
+    overflow: hidden;
+
+}
+
+nav{
+
+    padding-top: 18px;
+    padding-bottom: 12px;
+    width: 100%;
+    background-color: #813333;
+    color: #333;
+}
+
+nav h1{
+    margin-left: 190px;
+    font-size: 27px;
+    line-height: 27px;
+    transform: translateY(28%);
+    font-family: "kofe" ,sans-serif;
+}
+
+nav a i{
+    color: #333;
+    font-size: 30px;
+    margin-left: 23px;
+    transform: translateY(-55%);
+    padding: 0;
+}
+.counter .number span{
+    display: inline-block; /* يحافظ على الحواف بدون تمدد */
+    border: 3px solid #813333;
+    text-align: center;
+    padding: 30px 90px;
+    border-radius: 9px;
+    font-size: 27px;
+    color: whitesmoke;
+    position: relative;
+    top: 70px;
+    left: 80px;
+    font-family: "cairo",sans-serif;
+}
+
+.btn{
+    padding: 100px 100px;
+    border: transparent;
+    border-radius: 100px;
+    margin-top: 170px;
+    margin-left: 60px;
+    background-color: #813333;
+}
+
+
+.btn:active{
+    scale: 0.97;
+    transition: 0.2s;
+}
+
+.btn2{
+    padding: 20px 20px;
+    border: transparent;
+    border-radius: 100px;
+    margin-left: 274px;
+    transform: translateY(-550%);
+    background-color: #813333;
+    filter: blur(0.4px);
+   
+}
+
+.btn2:active{
+    scale: 0.98;
+    transition: 0.2s;
+}
