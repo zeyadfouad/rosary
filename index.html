@@ -53,6 +53,13 @@
                 transform: rotate(360deg);
             }
         }
+        
+        /* نمط زر الإشعارات */
+        #notifi {
+            padding: 20px;
+            background-color: violet;
+            display: none; /* مخفي افتراضيًا */
+        }
     </style>
 </head>
 <body>
@@ -70,26 +77,58 @@
         <button id="startButton" class="button2" data-aos="fade-up" data-aos-duration="1500">أبدا</button>
     </a>
 
-    <button style="padding: 20px; background-color: violet;" id="notifi">Click</button>
+    <button id="notifi">طلب إذن الإشعارات مرة أخرى</button>
 
 <script>
-    const notification2 = document.getElementById("notifi");
-
-    notification2.addEventListener("click", () => {
+    // دالة لطلب إذن الإشعارات وعرضها
+    function requestNotificationPermission() {
         Notification.requestPermission().then(permission => {
-            if (permission === "granted") {  // ✅ التأكد من السماح بالإشعارات
-                new Notification("🔔 إشعار جديد!", {
-                    body: "تم إرسال الإشعار بنجاح 🎉",
-                    icon: "https://via.placeholder.com/128", // 🔹 يمكنك استبدالها برابط أيقونة
-                    vibrate: [200, 100, 200] // 🔹 اهتزاز على الهواتف
+            const notificationButton = document.getElementById("notifi");
+            
+            if (permission === "granted") {
+                // إذا تم منح الإذن، قم بإظهار إشعار ترحيبي
+                new Notification("شكرًا لك!", {
+                    body: "تم تفعيل الإشعارات بنجاح. شكرًا لثقتك بنا.",
+                    icon: "https://via.placeholder.com/128"
                 });
+                notificationButton.style.display = "none"; // إخفاء الزر
+            } else if (permission === "denied") {
+                // إذا تم رفض الإذن، أظهر الزر للسماح للمستخدم بالمحاولة لاحقًا
+                notificationButton.style.display = "block";
+                alert("يمكنك تفعيل الإشعارات لاحقًا من خلال الضغط على الزر المخصص.");
             } else {
-                alert("⚠️ لم يتم منح الإذن للإشعارات!");
+                // إذا كان الإذن "افتراضي" (المستخدم لم يتخذ قرارًا بعد)
+                notificationButton.style.display = "none";
             }
         });
+    }
+
+    // عند النقر على زر الإشعارات
+    document.getElementById("notifi").addEventListener("click", () => {
+        requestNotificationPermission();
+    });
+
+    // طلب إذن الإشعارات تلقائيًا عند تحميل الصفحة
+    window.addEventListener("load", () => {
+        // تحقق مما إذا كانت واجهة برمجة تطبيقات الإشعارات مدعومة
+        if ("Notification" in window) {
+            // إذا كان الإذن ممنوحًا بالفعل، لا تفعل شيئًا
+            if (Notification.permission === "granted") {
+                document.getElementById("notifi").style.display = "none";
+            } 
+            // إذا كان الإذن مرفوضًا، أظهر الزر
+            else if (Notification.permission === "denied") {
+                document.getElementById("notifi").style.display = "block";
+            }
+            // إذا لم يتم طلب الإذن بعد، اطلبه تلقائيًا
+            else {
+                requestNotificationPermission();
+            }
+        } else {
+            alert("المتصفح الخاص بك لا يدعم الإشعارات!");
+        }
     });
 </script>
-
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -114,8 +153,317 @@
             }, 1500); // تأخير الانتقال
         });
     </script>
-     
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <style>
+        /* تأثير التلاشي عند مغادرة الصفحة */
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
 
+        /* شاشة تحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #333; /* جعل الخلفية سوداء */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.8s, visibility 0.8s;
+            z-index: 9999; /* تأكد من أنها تظهر فوق كل العناصر */
+        }
 
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* شكل الدائرة الدوارة */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #ff5733; /* لون مرئي */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* نمط زر الإشعارات */
+        #notifi {
+            padding: 20px;
+            background-color: violet;
+            display: none; /* مخفي افتراضيًا */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة تحميل -->
+    <div class="loading-screen">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="image"></div>
+
+    <h1>تسبيح لله</h1>
+
+    <a href="counter.html">
+        <button id="startButton" class="button2" data-aos="fade-up" data-aos-duration="1500">أبدا</button>
+    </a>
+
+    <button id="notifi">طلب إذن الإشعارات مرة أخرى</button>
+
+<script>
+    // دالة لطلب إذن الإشعارات وعرضها
+    function requestNotificationPermission() {
+        Notification.requestPermission().then(permission => {
+            const notificationButton = document.getElementById("notifi");
+            
+            if (permission === "granted") {
+                // إذا تم منح الإذن، قم بإظهار إشعار ترحيبي
+                new Notification("شكرًا لك!", {
+                    body: "تم تفعيل الإشعارات بنجاح. شكرًا لثقتك بنا.",
+                    icon: "https://via.placeholder.com/128"
+                });
+                notificationButton.style.display = "none"; // إخفاء الزر
+            } else if (permission === "denied") {
+                // إذا تم رفض الإذن، أظهر الزر للسماح للمستخدم بالمحاولة لاحقًا
+                notificationButton.style.display = "block";
+                alert("يمكنك تفعيل الإشعارات لاحقًا من خلال الضغط على الزر المخصص.");
+            } else {
+                // إذا كان الإذن "افتراضي" (المستخدم لم يتخذ قرارًا بعد)
+                notificationButton.style.display = "none";
+            }
+        });
+    }
+
+    // عند النقر على زر الإشعارات
+    document.getElementById("notifi").addEventListener("click", () => {
+        requestNotificationPermission();
+    });
+
+    // طلب إذن الإشعارات تلقائيًا عند تحميل الصفحة
+    window.addEventListener("load", () => {
+        // تحقق مما إذا كانت واجهة برمجة تطبيقات الإشعارات مدعومة
+        if ("Notification" in window) {
+            // إذا كان الإذن ممنوحًا بالفعل، لا تفعل شيئًا
+            if (Notification.permission === "granted") {
+                document.getElementById("notifi").style.display = "none";
+            } 
+            // إذا كان الإذن مرفوضًا، أظهر الزر
+            else if (Notification.permission === "denied") {
+                document.getElementById("notifi").style.display = "block";
+            }
+            // إذا لم يتم طلب الإذن بعد، اطلبه تلقائيًا
+            else {
+                requestNotificationPermission();
+            }
+        } else {
+            alert("المتصفح الخاص بك لا يدعم الإشعارات!");
+        }
+    });
+</script>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                document.querySelector(".loading-screen").classList.add("hidden");
+            }, 600); // إخفاء شاشة التحميل بعد 600 مللي ثانية
+        });
+
+        // عند الضغط على زر "ابدأ"، يتم تشغيل شاشة التحميل قبل الانتقال
+        document.getElementById("startButton").addEventListener("click", function (event) {
+            event.preventDefault(); // منع الانتقال المباشر
+            let destination = "counter.html"; 
+
+            document.querySelector(".loading-screen").classList.remove("hidden"); // إظهار شاشة التحميل
+            document.body.classList.add("fade-out"); // تشغيل تأثير التلاشي
+
+            setTimeout(() => {
+                window.location.href = destination;
+            }, 1500); // تأخير الانتقال
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <style>
+        /* تأثير التلاشي عند مغادرة الصفحة */
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        /* شاشة تحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #333; /* جعل الخلفية سوداء */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.8s, visibility 0.8s;
+            z-index: 9999; /* تأكد من أنها تظهر فوق كل العناصر */
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* شكل الدائرة الدوارة */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #ff5733; /* لون مرئي */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* نمط زر الإشعارات */
+        #notifi {
+            padding: 20px;
+            background-color: violet;
+            display: none; /* مخفي افتراضيًا */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة تحميل -->
+    <div class="loading-screen">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="image"></div>
+
+    <h1>تسبيح لله</h1>
+
+    <a href="counter.html">
+        <button id="startButton" class="button2" data-aos="fade-up" data-aos-duration="1500">أبدا</button>
+    </a>
+
+    <button id="notifi">طلب إذن الإشعارات مرة أخرى</button>
+
+<script>
+    // دالة لطلب إذن الإشعارات وعرضها
+    function requestNotificationPermission() {
+        Notification.requestPermission().then(permission => {
+            const notificationButton = document.getElementById("notifi");
+            
+            if (permission === "granted") {
+                // إذا تم منح الإذن، قم بإظهار إشعار ترحيبي
+                new Notification("شكرًا لك!", {
+                    body: "تم تفعيل الإشعارات بنجاح. شكرًا لثقتك بنا.",
+                    icon: "https://via.placeholder.com/128"
+                });
+                notificationButton.style.display = "none"; // إخفاء الزر
+            } else if (permission === "denied") {
+                // إذا تم رفض الإذن، أظهر الزر للسماح للمستخدم بالمحاولة لاحقًا
+                notificationButton.style.display = "block";
+                alert("يمكنك تفعيل الإشعارات لاحقًا من خلال الضغط على الزر المخصص.");
+            } else {
+                // إذا كان الإذن "افتراضي" (المستخدم لم يتخذ قرارًا بعد)
+                notificationButton.style.display = "none";
+            }
+        });
+    }
+
+    // عند النقر على زر الإشعارات
+    document.getElementById("notifi").addEventListener("click", () => {
+        requestNotificationPermission();
+    });
+
+    // طلب إذن الإشعارات تلقائيًا عند تحميل الصفحة
+    window.addEventListener("load", () => {
+        // تحقق مما إذا كانت واجهة برمجة تطبيقات الإشعارات مدعومة
+        if ("Notification" in window) {
+            // إذا كان الإذن ممنوحًا بالفعل، لا تفعل شيئًا
+            if (Notification.permission === "granted") {
+                document.getElementById("notifi").style.display = "none";
+            } 
+            // إذا كان الإذن مرفوضًا، أظهر الزر
+            else if (Notification.permission === "denied") {
+                document.getElementById("notifi").style.display = "block";
+            }
+            // إذا لم يتم طلب الإذن بعد، اطلبه تلقائيًا
+            else {
+                requestNotificationPermission();
+            }
+        } else {
+            alert("المتصفح الخاص بك لا يدعم الإشعارات!");
+        }
+    });
+</script>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                document.querySelector(".loading-screen").classList.add("hidden");
+            }, 600); // إخفاء شاشة التحميل بعد 600 مللي ثانية
+        });
+
+        // عند الضغط على زر "ابدأ"، يتم تشغيل شاشة التحميل قبل الانتقال
+        document.getElementById("startButton").addEventListener("click", function (event) {
+            event.preventDefault(); // منع الانتقال المباشر
+            let destination = "counter.html"; 
+
+            document.querySelector(".loading-screen").classList.remove("hidden"); // إظهار شاشة التحميل
+            document.body.classList.add("fade-out"); // تشغيل تأثير التلاشي
+
+            setTimeout(() => {
+                window.location.href = destination;
+            }, 1500); // تأخير الانتقال
+        });
+    </script>
 </body>
 </html>
